@@ -24,7 +24,7 @@ jobs:
           echo "::set-output name=git-branch::$(echo ${{ github.event.issue.title }} | sed 's/^deploy //I')"
   
   build:
-    if: needs.setup.outputs.git-branch
+    if: needs.setup.outputs.branch
     needs: [setup]
     environment: dev
     name: build
