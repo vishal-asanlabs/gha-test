@@ -4,7 +4,7 @@ on:
       - opened
   push:
     branches:
-      - main
+      - master
     
 name: dev deployment
 jobs:
@@ -23,7 +23,7 @@ jobs:
         run: |
           echo "::set-output name=git-branch::$(echo ${{ github.event.issue.title }} | sed 's/^deploy //I')"
         
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'push'
         id: dev
         run: |
           echo "::set-output name=git-branch::master"
