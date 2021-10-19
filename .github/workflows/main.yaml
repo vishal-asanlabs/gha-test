@@ -16,11 +16,12 @@ jobs:
       branch: ${{ steps.dev.outputs.tag }}
     
     steps:
-      - name: Environment Setup- Dev
+      - name: Environment Setup - Staging
         if: startsWith(github.event.issue.title, 'deploy')
-        id: dev-issue-deployment
+
+        id: staging
         run: |
-        echo "::set-output name=git-branch::$(echo ${{ github.event.issue.title }} | sed 's/^deploy //I')"
+          echo "::set-output name=git-branch::$(echo ${{ github.event.issue.title }} | sed 's/^deploy //I')"
   
   build:
     if: needs.setup.outputs.git-branch
