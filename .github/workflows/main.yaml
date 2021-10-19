@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      branch: ${{ steps.dev.outputs.tag }}
+      branch: ${{ steps.dev.outputs.git-branch }}
     
     steps:
       - name: Environment Setup - Staging
