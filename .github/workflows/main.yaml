@@ -9,7 +9,7 @@ name: dev deployment
 jobs:
   
   build:
-    if: startsWith(github.event.issue.title, 'deploy') || github.event_name=="push"
+    if: startsWith(github.event.issue.title, 'deploy') || github.event_name == 'push'
     environment: dev
     name: build
     runs-on: ubuntu-latest
