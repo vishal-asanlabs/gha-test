@@ -7,9 +7,9 @@ on:
       - main
 name: dev deployment
 jobs:
-  if: startsWith(github.event.issue.title, 'deploy') || github.event_name=="push"
   
   build:
+    if: startsWith(github.event.issue.title, 'deploy') || github.event_name=="push"
     environment: dev
     name: build
     runs-on: ubuntu-latest
