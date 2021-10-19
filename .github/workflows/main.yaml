@@ -5,13 +5,32 @@ on:
   push:
     branches:
       - main
+    
 name: dev deployment
 jobs:
+  setup: 
+    name: Setup
+    runs-on: ubuntu-latest
+
+    outputs:
+      branch: ${{ steps.dev.outputs.tag }}
+    
+    steps:
+      - name: Environment Setup- Dev
+        if: startsWith(github.event.issue.title, 'deploy')
+        id: dev-issue-deployment
+        run: |
+        echo "::set-output name=git-branch::$(echo ${{ github.event.issue.title }} | sed 's/^deploy //I')"
+  
   
   build:
-    if: startsWith(github.event.issue.title, 'deploy') || github.event_name == 'push'
+    if: needs.setup.outputs.git-branch
+    needs: [setup]
     environment: dev
     name: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ needs.setup.outputs.git-branch }}
+
