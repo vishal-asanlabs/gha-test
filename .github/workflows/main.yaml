@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      git-branch: ${{ steps.dev.outputs.git-branch  ||  steps.devmain.git-branch }}
+      git-branch: ${{ steps.dev.outputs.git-branch  ||  steps.devmain.outputs.git-branch }}
     
     steps:
       - name: dev-deployment-any-branch
