@@ -13,18 +13,18 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      branch: ${{ steps.dev.outputs.git-branch }}
+      git-branch: ${{ steps.dev.outputs.git-branch }}
     
     steps:
-      - name: Environment Setup - Staging
+      - name: Environment Setup - dev
         if: startsWith(github.event.issue.title, 'deploy')
 
-        id: staging
+        id: dev
         run: |
           echo "::set-output name=git-branch::$(echo ${{ github.event.issue.title }} | sed 's/^deploy //I')"
   
   build:
-    if: needs.setup.outputs.branch
+    if: needs.setup.outputs.git-branch
     needs: [setup]
     environment: dev
     name: build
