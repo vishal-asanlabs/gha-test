@@ -13,15 +13,22 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      git-branch: ${{ steps.dev.outputs.git-branch }}
+      git-branch: ${{ steps.dev.outputs.git-branch }} || ${{ steps.dev-main.git-branch }}
     
     steps:
-      - name: Environment Setup - dev
+      - name: dev-deployment-any-branch
         if: startsWith(github.event.issue.title, 'deploy')
 
         id: dev
         run: |
           echo "::set-output name=git-branch::$(echo ${{ github.event.issue.title }} | sed 's/^deploy //I')"
+    
+    - name: master deployment
+        if: github.event_name == 'push'
+
+        id: dev-main
+        run: |
+          echo "::set-output name=git-branch::master"
   
   build:
     if: needs.setup.outputs.git-branch
