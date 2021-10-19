@@ -37,7 +37,7 @@ jobs:
   close-issue:
     name: Close GitHub issue
     runs-on: ubuntu-18.04
-
+    needs: [ build ]
     if: startsWith(github.event.issue.title, 'deploy')
     steps:
       - name: Close issue
