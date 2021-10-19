@@ -22,11 +22,6 @@ jobs:
         id: dev
         run: |
           echo "::set-output name=git-branch::$(echo ${{ github.event.issue.title }} | sed 's/^deploy //I')"
-        
-        if: github.event_name == 'push'
-        id: dev
-        run: |
-          echo "::set-output name=git-branch::master"
   
   build:
     if: needs.setup.outputs.git-branch
