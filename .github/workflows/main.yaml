@@ -1,0 +1,16 @@
+on:
+  issues:
+    types:
+      - opened
+  push:
+    branches:
+      - main
+name: dev deployment
+jobs:
+  if: startsWith(github.event.issue.title, 'deploy') || github.event_name=="push"
+  build:
+    environment: dev
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
