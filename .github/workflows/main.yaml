@@ -8,6 +8,7 @@ on:
 name: dev deployment
 jobs:
   if: startsWith(github.event.issue.title, 'deploy') || github.event_name=="push"
+  
   build:
     environment: dev
     name: build
