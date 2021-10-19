@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      git-branch: ${{ steps.dev.outputs.git-branch }} || ${{ steps.dev-main.git-branch }}
+      git-branch: ${{ steps.dev.outputs.git-branch  ||  steps.devmain.git-branch }}
     
     steps:
       - name: dev-deployment-any-branch
@@ -26,7 +26,7 @@ jobs:
       - name: master deployment
         if: github.event_name == 'push'
 
-        id: dev-main
+        id: devmain
         run: |
           echo "::set-output name=git-branch::master"
   
