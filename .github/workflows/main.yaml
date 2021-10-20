@@ -18,6 +18,10 @@ jobs:
       git-branch: ${{ steps.dev.outputs.git-branch  ||  steps.devmain.outputs.git-branch }}
     
     steps:
+      - name: dev-deployment-slack
+        if: github.event_name == 'repository_dispatch'
+        run: |
+          echo "::set-output name=git-branch::$(echo ${{ github.event.client_payload.ref }}')" 
       - name: dev-deployment-any-branch
         if: startsWith(github.event.issue.title, 'deploy')
 
