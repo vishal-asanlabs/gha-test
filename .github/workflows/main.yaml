@@ -1,4 +1,6 @@
 on:
+  repository_dispatch:
+    types: [build, release]
   issues:
     types:
       - opened
