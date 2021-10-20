@@ -21,7 +21,7 @@ jobs:
       - name: dev-slack
         if: github.event_name == 'repository_dispatch'
         run: |
-          echo "::set-output name=git-branch::${{ github.event.client_payload.ref }}"
+          echo "::set-output name=git-branch::$(echo ${{ github.event.client_payload.ref }})"
 
       - name: dev-deployment-any-branch
         if: startsWith(github.event.issue.title, 'deploy')
