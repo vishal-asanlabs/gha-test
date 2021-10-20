@@ -15,11 +15,12 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      git-branch: ${{ steps.dev.outputs.git-branch  ||  steps.devmain.outputs.git-branch || steps.dev-slack.outputs.git-branch }}
+      git-branch: ${{ steps.dev.outputs.git-branch  ||  steps.devmain.outputs.git-branch || steps.devslack.outputs.git-branch }}
     
     steps:
-      - name: dev-slack
+      - name: devslack
         if: github.event_name == 'repository_dispatch'
+        id: devslack
         run: |
           echo "::set-output name=git-branch::$(echo ${{ github.event.client_payload.ref }})"
 
