@@ -43,6 +43,8 @@ jobs:
           echo "::set-output name=stack::alpha"
   deploy:
       if: needs.setup.outputs.git-branch
+      name: build
+      runs-on: ubuntu-latest
       steps:
       # - name: Configure AWS credentials account
       #   uses: aws-actions/configure-aws-credentials@v1
