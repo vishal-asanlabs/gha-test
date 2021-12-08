@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - main
-    
+
 name: dev deployment
 jobs:
   setup: 
@@ -23,7 +23,6 @@ jobs:
         id: devslack
         run: |
           echo "::set-output name=git-branch::$(echo ${{ github.event.client_payload.ref }})"
-
       - name: dev-deployment-any-branch
         if: startsWith(github.event.issue.title, 'deploy')
 
@@ -36,26 +35,74 @@ jobs:
 
         id: devmain
         run: |
-          echo "::set-output name=git-branch::master"
-  
-  build:
-    if: needs.setup.outputs.git-branch
-    needs: [setup]
-    environment: dev
-    name: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+          echo "::set-output name=git-branch::main"
+  deploy:
+      if: needs.setup.outputs.git-branch
+      needs: [setup]
+      name: Setup Gcloud Account
+      runs-on: ubuntu-latest
+      env:
+        IMAGE_NAME: gcr.io/${{ secrets.DEV_PROJECT_ID }}/${{ secrets.GCP_APP_NAME }}
+      steps:
+      # - name: Configure AWS credentials account
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
+      #     role-session-name: ${{ secrets.AWS_ROLE }}
+      #     aws-region: us-east-1
+      
+      # - name: Login to Amazon ECR
+      #   id: login-ecr
+      #   uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
         with:
           ref: ${{ needs.setup.outputs.git-branch }}
+
+      - name: Build Docker image
+        run: docker build . -t ratel:latest
       
-      # some more steps.
+      - name: Tag
+        id: tag
+        run: echo "::set-output name=tag::$(date +'%Y-%m-%d')"
 
+      # - name: Push image to ECR
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     ECR_REPOSITORY: cf-ecr-dev
+      #     IMAGE_TAG: ${{ steps.tag.outputs.tag }}
+      #   run: |
+      #     docker tag ratel:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      
+      - name: Checkout Ops
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ format('{0}-ops', github.repository) }}
+          token: ${{ secrets.CF_Token }}
+          path: ops
 
+      - uses: imranismail/setup-kustomize@v1
+        with:
+          kustomize-version: 3.9.2
+
+      - name: Update tag
+        run: |
+          kustomize edit set image $IMAGE_REGISTRY/$IMAGE_REPO:${{ needs.setup.outputs.tag }}
+        working-directory: ${{ format('ops/{0}', needs.setup.outputs.stack) }}
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Deploy tag ${{ needs.setup.outputs.tag }}
+          repository: ops
+          branch: main
+    
   close-issue:
     name: Close GitHub issue
     runs-on: ubuntu-18.04
-    needs: [ build ]
+    needs: [ deploy ]
     if: startsWith(github.event.issue.title, 'deploy')
     steps:
       - name: Close issue
