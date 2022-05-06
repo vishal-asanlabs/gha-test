@@ -4,7 +4,7 @@ on:
       - opened
   push:
     branches:
-      - main
+      - master
 
 name: dev deployment
 jobs:
