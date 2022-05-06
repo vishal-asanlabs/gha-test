@@ -39,8 +39,8 @@ jobs:
       - name: Deploy
         run: |
           curl -sS -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/amd64/kubectl
-          kubectl version
-          ./kubectl version
+          echo $(kubectl version)
+          echo $(./kubectl version)
 
   close-issue:
     name: Close GitHub issue
